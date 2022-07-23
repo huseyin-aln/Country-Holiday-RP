@@ -16,11 +16,24 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
 export default function SimpleContainer() {
-  const [country, setCountry] = useState("");
-  const [year, setYear] = useState("");
-  const [holidays, setHolidays] = useState("");
+  const [country, setCountry] = useState("US");
+  const [year, setYear] = useState("2022");
+  const [holidays, setHolidays] = useState([]);
 
-  let url = `https://calendarific.com/api/v2/holidays?&api_key=47bbad09ac6713178e45e53a49b019fceaac2750&country=${country}&year=${year}&type=national`;
+  const API_KEY = process.env.REACT_APP_API_KEY;
+
+  let url = `https://calendarific.com/api/v2/holidays?&api_key=${API_KEY}&country=${country}&year=${year}&type=national`;
+
+  const getData = async () => {
+    const { data } = await axios.get(url);
+    setHolidays(data.response.holidays);
+  };
+  console.log(holidays);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    getData();
+  };
 
   return (
     <Container maxWidth="md" sx={{ marginTop: "1rem" }}>
@@ -33,6 +46,7 @@ export default function SimpleContainer() {
           color: "#F0F0F2",
         }}
         component="form"
+        onSubmit={handleSubmit}
       >
         <TextField
           placeholder="Please Enter Country..."
@@ -68,14 +82,12 @@ export default function SimpleContainer() {
       </Box>
       <Box>
         <Typography variant="h3" component="h3" align="center">
-          {/* {year} */}
+          {year}
         </Typography>
         <Typography variant="h4" component="h4" align="center">
-          {/* Holidays for {country.toUpperCase()} */}
+          Holidays for {country.toUpperCase()}
         </Typography>
-        <Typography sx={{ textAlign: "center" }}>
-          {/* <img src={flag?.filter((c) => c.altSpellings[0] === country.toUpperCase())[0]?.flags.png} alt="" /> */}
-        </Typography>
+        <Typography sx={{ textAlign: "center" }}></Typography>
         <Grid container>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -90,24 +102,30 @@ export default function SimpleContainer() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {/* {holidays.map((item,index) => {
-            const {country:{name:ctname}, date:{iso} , description : desc, name:hname, urlid } = item
-            return(
-            <TableRow
-              key={urlid}
-              sx={{backgroundColor:
-                index % 2 
-                    ? "#A1A2A6"
-                    : "#F0F0F2",}}
-            >
-              <TableCell component="th" scope="row">
-                {ctname}
-              </TableCell>
-              <TableCell align="left">{hname}</TableCell>
-              <TableCell align="left">{iso}</TableCell>
-              <TableCell align="left">{desc}</TableCell>
-            </TableRow>
-        )})} */}
+                {holidays.map((item, index) => {
+                  const {
+                    country: { name: ctname },
+                    date: { iso },
+                    description: desc,
+                    name: hname,
+                    urlid,
+                  } = item;
+                  return (
+                    <TableRow
+                      key={urlid}
+                      sx={{
+                        backgroundColor: index % 2 ? "#A1A2A6" : "#F0F0F2",
+                      }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {ctname}
+                      </TableCell>
+                      <TableCell align="left">{hname}</TableCell>
+                      <TableCell align="left">{iso}</TableCell>
+                      <TableCell align="left">{desc}</TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
