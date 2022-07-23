@@ -16,8 +16,8 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
 export default function SimpleContainer() {
-  const [country, setCountry] = useState("US");
-  const [year, setYear] = useState("2022");
+  const [country, setCountry] = useState("");
+  const [year, setYear] = useState("");
   const [holidays, setHolidays] = useState([]);
 
   const API_KEY = process.env.REACT_APP_API_KEY;
